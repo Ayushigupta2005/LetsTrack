@@ -25,6 +25,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     implementation(libs.compose.material3)
+
+    implementation("com.google.firebase:firebase-firestore")
 }
 
 android {
