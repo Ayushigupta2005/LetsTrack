@@ -1,31 +1,107 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# LetsTrack
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+A Kotlin-based Android implementation of a group location tracking application using Android Geofencing and Firebase.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## Overview
 
-### Running the apps
+LetsTrack allows users to create or join a tracking group and associate the group with a geofenced location.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+When a group member leaves the registered geofence:
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+1. Android detects the geofence exit.
+2. A `BroadcastReceiver` receives the exit event.
+3. The app identifies the user and tracking group.
+4. The exit event is stored in Firebase Firestore.
 
-### Running tests
+## Features
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+- Anonymous Firebase Authentication
+- Create and join tracking groups
+- Firebase Firestore group storage
+- Android Geofencing API
+- Background geofence event handling through `BroadcastReceiver`
+- Geofence exit event storage in Firestore
+- Local tracking preferences for the active group
+- Jetpack Compose UI
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+## Tech Stack
 
----
+- **Kotlin**
+- **Jetpack Compose**
+- **Firebase Authentication**
+- **Firebase Cloud Firestore**
+- **Google Play Services Location / Geofencing**
+- **Coroutines**
+- **Android BroadcastReceiver**
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## Architecture
+
+The main Android flow is:
+
+```text
+User
+ │
+ ├── Create / Join Group
+ │        │
+ │        ▼
+ │    Firebase Auth
+ │        │
+ │        ▼
+ │    Cloud Firestore
+ │
+ └── Start Tracking
+          │
+          ▼
+   GeofencingClient
+          │
+          ▼
+    Geofence Exit
+          │
+          ▼
+ GeofenceBroadcastReceiver
+          │
+          ▼
+    tracking_events
+          │
+          ▼
+     Firestore
+```
+
+## Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Ayushigupta2005/LetsTrack.git
+```
+
+### 2. Configure Firebase
+
+Create a Firebase project and register the Android application using:
+
+```text
+com.ayushi.letstrack
+```
+
+Enable:
+
+- Anonymous Authentication
+- Cloud Firestore
+
+Download `google-services.json` and place it at:
+
+```text
+AndroidApp/google-services.json
+```
+
+The Firebase configuration file is intentionally excluded from Git using `.gitignore`.
+
+### 3. Open the project
+
+Open the project in Android Studio and allow Gradle to sync.
+
+### 4. Run
+
+Run the `AndroidApp` module on an Android device.
+
+The application requires location permissions for geofence monitoring.
