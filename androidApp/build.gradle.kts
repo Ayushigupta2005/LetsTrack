@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.compose.material3)
 
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 }
 
 android {
